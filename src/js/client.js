@@ -21,7 +21,22 @@ const render = lRender => {
   if (root.hasChildNodes()) {
     root.innerHTML = null;
   }
-  
+
+  const title = document.createElement('h1');
+  title.innerHTML = 'Totito';
+
+  const retryBtn = document.createElement('button');
+  retryBtn.className = 'retryBtn';
+  retryBtn.innerHTML = 'Volver a intentar';
+  retryBtn.onclick = () => {
+    lRender.turno = 1;
+    lRender.completado = 0;
+    setup(lRender);
+    render(lRender);
+  }
+
+  root.appendChild(title);
+
   //Div principal, contiene la rejilla
   const padre = document.createElement('div');
   padre.className = 'padre'
@@ -47,6 +62,7 @@ const render = lRender => {
     };
     })
   });
+  root.appendChild(retryBtn);
 }
 
 const gano = (estado, x, y) => {
