@@ -1,108 +1,104 @@
-import expect from 'expect';
-import { createStore } from 'redux';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Immutable from 'immutable';
+const estado = {
+  turno: 1,
+  completado: 0,
+  tamano: 3,
+  tablero: []
+}
 
-// Javascript the good parts
+const imagenes = ['img/Equis.png', 'img/Circulo.png', 'img/Pepe.png']
 
-const Counter = ({ value, incrementAction, decrementAction, removeAction }) => (
-  <div>
-    <h1>{ value }</h1>
-    <button onClick={ incrementAction }>+</button>
-    <button onClick={ decrementAction }>-</button>
-    <button onClick={ removeAction }>x</button>
-  </div>
-);
-
-const CounterList = ({ list }) => (
-  <div>
-    {
-      list.map(
-        (value, i) => (
-          <Counter
-            key={ i }
-            value={ value }
-            index={ i }
-            incrementAction={
-              () => store.dispatch({
-                type: 'INCREMENT',
-                payload: { index: i }
-              })
-            }
-            decrementAction={
-              () => store.dispatch({
-                type: 'DECREMENT',
-                payload: { index: i }
-              })
-            }
-            removeAction={
-              () => store.dispatch({
-                type: 'REMOVE_COUNTER',
-                payload: {
-                  index: i
-                }
-              })
-            }
-          />
-        )
-      )
+const setup = lSetup => {
+  //Inicia el array del juego
+  for (let i = 0; i < lSetup.tamano; i++) {
+    lSetup.tablero[i] = [];
+    for (let j = 0; j < lSetup.tamano; j++) {
+      lSetup.tablero[i][j] = 2;
     }
-    <button onClick={ () => store.dispatch({ type: 'ADD_COUNTER' }) }>Add counter</button>
-  </div>
-);
-
-const validateIndex = (index, list) => 0 <= index && index < list.size;
-
-// Reducer
-const counterList = (state = Immutable.List.of(), action) => {
-
-  if(typeof action.payload !== 'undefined'){
-    var { index } = action.payload;
-  }
-
-  switch(action.type){
-    case 'ADD_COUNTER':
-      return state.push(0);
-
-    case 'REMOVE_COUNTER':
-
-      if(validateIndex(index, state)){
-        return state.delete(index);
-      }
-
-      return state;
-
-    case 'INCREMENT':
-
-      if(validateIndex(index, state)){
-        return state.update(index, (v) => v + 1);
-      }
-
-      return state;
-
-    case 'DECREMENT':
-
-      if(validateIndex(index, state)){
-        return state.update(index,  (v) => v - 1);
-      }
-
-      return state;
-
-    default:
-      return state;
   }
 }
 
-// createStore: reducer --> store
-const store = createStore(counterList);
-
-const render = () => {
-  ReactDOM.render(
-    <CounterList list={ store.getState() } />,
-    document.getElementById('root')
-  )
+const render = lRender => {
+  if (root.hasChildNodes()) {
+    root.innerHTML = null;
+  }
+  
+  //Div principal, contiene la rejilla
+  const padre = document.createElement('div');
+  padre.className = 'padre'
+  root.appendChild(padre);
+  lRender.tablero.forEach(function(fila, numero){
+    const row = document.createElement('div');
+    row.className = 'fila'
+    padre.appendChild(row);
+    
+    fila.forEach(function (celda, index){
+      const espacio = document.createElement('div');
+      espacio.className = `casilla`;
+      espacio.innerHTML = `<img src= ${imagenes[celda%3]}>`;
+      
+      row.appendChild(espacio);
+      espacio.onclick = () => {
+        if (lRender.tablero[numero][index] == 2) {
+          lRender.tablero[numero][index] = lRender.turno%2;
+          lRender.turno = lRender.turno + 1
+          gano(lRender, numero, index);
+          render(lRender);
+        }
+    };
+    })
+  });
 }
 
-store.subscribe(render);
-render();
+const gano = (estado, x, y) => {
+  //Check columna
+  for(let i = 0; i < estado.tamano; i++){
+    if(estado.tablero[i][y] == estado.turno%2 || estado.tablero[i][y] == 2){
+      break;
+    }
+    if(i == estado.tamano-1){
+        console.log(`Gano el jugador ${estado.turno%2 + 1}`); 
+    }
+  }
+
+  //Check row
+  for(let i = 0; i < estado.tamano; i++){
+    if(estado.tablero[x][i] == estado.turno%2 || estado.tablero[x][i] == 2){
+      break;
+    }
+    if(i == estado.tamano-1){
+        console.log(`Gano el jugador ${estado.turno%2 + 1}`); 
+    }
+  }
+
+  //check diagonal
+  if (x==y){
+    for(let i = 0; i < estado.tamano; i++){
+      if(estado.tablero[i][i] == estado.turno%2 || estado.tablero[i][i] == 2){
+        break;
+      }
+      if(i == estado.tamano-1){
+          console.log(`Gano el jugador ${estado.turno%2 + 1}`);
+      }
+    }
+  }
+
+  if (x == estado.tamano -1 - y) {
+    for(let i = estado.tamano - 1; i > -1; i--){
+      if(estado.tablero[estado.tamano - 1 - i][i] == estado.turno%2 || estado.tablero[estado.tamano - 1 - i][i] == 2){
+        break;
+      }
+      if(i == 0){
+          console.log(`Gano el jugador ${estado.turno%2 + 1}`); 
+      }
+    }
+    
+  }
+
+  if (estado.turno == (estado.tamano * estado.tamano) + 1) {
+    console.log("empate");
+  }
+  
+}
+
+setup(estado);
+render(estado);

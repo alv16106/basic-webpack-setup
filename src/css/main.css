@@ -1,0 +1,25 @@
+body{
+  margin: 0%;
+  padding: 0%;
+  background-color: azure;
+}
+
+.padre{
+  display: flex;
+  flex-direction: column;
+  width: 25rem;
+  align-self: center;
+  margin: 0 auto;
+}
+
+.fila{
+  display: flex;
+  flex-direction: row;
+}
+
+.casilla img{
+  max-width: 85%;
+  max-height: 85%;
+  width: auto;
+  height: auto;
+}
