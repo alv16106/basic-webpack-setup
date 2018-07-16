@@ -53,7 +53,7 @@ const render = (lRender) => {
       
       row.appendChild(espacio);
       espacio.onclick = () => {
-        if (lRender.tablero[numero][index] == 2 && lRender.completado === 0) {
+        if (lRender.tablero[numero][index] === 2 && lRender.completado === 0) {
           lRender.tablero[numero][index] = lRender.turno%2;
           lRender.turno = lRender.turno + 1
           gano(lRender, numero, index);
@@ -64,9 +64,9 @@ const render = (lRender) => {
   });
   const sub = document.createElement('div');
   sub.className = 'fila'
-  if (lRender.completado == 0) {
+  if (lRender.completado === 0) {
     sub.innerHTML = `<h3>Es turno de &nbsp; &nbsp;</h3><img src= ${imagenes[lRender.turno%2]} class = 'turno'>` ;
-  }else if (lRender.completado == 3) {
+  }else if (lRender.completado === 3) {
     sub.innerHTML = `<h3>Empate &nbsp; &nbsp;</h3><img src= ${imagenes[3]} class = 'turno'>` ;
   }else{
     sub.innerHTML = `<h3>El ganador es: &nbsp; &nbsp;</h3><img src= ${imagenes[(lRender.turno+1)%2]} class = 'turno'>` ;
@@ -77,51 +77,52 @@ const render = (lRender) => {
 };
 
 const gano = (estado, x, y) => {
+  //empate
+  if (estado.turno === (estado.tamano * estado.tamano) + 1) {
+    estado.completado = 3;
+  }
+
   // Check columna
   for (let i = 0; i < estado.tamano; i++) {
-    if (estado.tablero[i][y] == estado.turno % 2 || estado.tablero[i][y] == 2) {
+    if (estado.tablero[i][y] === estado.turno % 2 || estado.tablero[i][y] === 2) {
       break;
     }
-    if (i == estado.tamano - 1) {
+    if (i === estado.tamano - 1) {
       estado.completado = estado.turno % 2 + 1;
     }
   }
 
   // Check row
   for (let i = 0; i < estado.tamano; i++) {
-    if (estado.tablero[x][i] == estado.turno % 2 || estado.tablero[x][i] == 2) {
+    if (estado.tablero[x][i] === estado.turno % 2 || estado.tablero[x][i] === 2) {
       break;
     }
-    if (i == estado.tamano - 1) {
+    if (i === estado.tamano - 1) {
       estado.completado = estado.turno % 2 + 1;
     }
   }
 
   // check diagonal
-  if (x == y) {
+  if (x === y) {
     for (let i = 0; i < estado.tamano; i++) {
-      if (estado.tablero[i][i] == estado.turno % 2 || estado.tablero[i][i] == 2) {
+      if (estado.tablero[i][i] === estado.turno % 2 || estado.tablero[i][i] === 2) {
         break;
       }
-      if (i == estado.tamano - 1) {
+      if (i === estado.tamano - 1) {
         estado.completado = estado.turno % 2 + 1;
       }
     }
   }
 
-  if (x == estado.tamano - 1 - y) {
+  if (x === estado.tamano - 1 - y) {
     for (let i = estado.tamano - 1; i > -1; i--) {
-      if (estado.tablero[estado.tamano - 1 - i][i] == estado.turno % 2 || estado.tablero[estado.tamano - 1 - i][i] == 2) {
+      if (estado.tablero[estado.tamano - 1 - i][i] === estado.turno % 2 || estado.tablero[estado.tamano - 1 - i][i] === 2) {
         break;
       }
-      if (i == 0) {
+      if (i === 0) {
         estado.completado = estado.turno % 2 + 1;
       }
     }
-  }
-
-  if (estado.turno == (estado.tamano * estado.tamano) + 1) {
-    estado.completado = 3;
   }
 };
 
